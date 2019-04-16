@@ -1,11 +1,9 @@
 var socket = io();
 
 var movement = {
-  up: false,
-  down: false,
-  left: false,
-  right: false
+  numCasas: 0
 };
+
 document.addEventListener("keydown", function(event) {
   switch (event.keyCode) {
     case 65: // A
@@ -38,7 +36,7 @@ document.addEventListener("keyup", function(event) {
       break;
   }
 });
-socket.emit("new player", "MMM");
+
 setInterval(function() {
   socket.emit("movement", movement);
 }, 1000 / 60);
