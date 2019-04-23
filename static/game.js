@@ -1,59 +1,27 @@
-var socket = io();
+function movePlayer(diceNumber) {
+  socket.emit("movement", diceNumber);
+}
 
-var movement = {
-  numCasas: 0
-};
+function updatemap(state) {
+  var x = document.getElementById("map").rows;
 
-document.addEventListener("keydown", function(event) {
-  switch (event.keyCode) {
-    case 65: // A
-      movement.left = true;
-      break;
-    case 87: // W
-      movement.up = true;
-      break;
-    case 68: // D
-      movement.right = true;
-      break;
-    case 83: // S
-      movement.down = true;
-      break;
+  var map = state.map;
+  var player = state.players;
+  for (var i = 0; i < map.length; i++) {
+    var position = x[map[i].x].cells[map[i].y];
+
+    position.style.backgroundColor = "#ba7";
+    for (var j = 0; j < map[i].player.length; i++) {
+      if (map[i].player[i] != null) {
+        position.style.backgroundColor = "#4ef4";
+        position.textContent = map[i].player[i].name;
+      }
+    }
   }
-});
-document.addEventListener("keyup", function(event) {
-  switch (event.keyCode) {
-    case 65: // A
-      movement.left = false;
-      break;
-    case 87: // W
-      movement.up = false;
-      break;
-    case 68: // D
-      movement.right = false;
-      break;
-    case 83: // S
-      movement.down = false;
-      break;
-  }
-});
+}
 
-setInterval(function() {
-  socket.emit("movement", movement);
-}, 1000 / 60);
+socket.on("state", function(state) {
+  console.log(state);
 
-var canvas = document.getElementById("canvas");
-canvas.width = 800;
-canvas.height = 600;
-var context = canvas.getContext("2d");
-
-socket.on("state", function(players) {
-  console.log(players);
-  context.clearRect(0, 0, 800, 600);
-  context.fillStyle = "green";
-  for (var id in players) {
-    var player = players[id];
-    context.beginPath();
-    context.arc(player.x, player.y, 10, 0, 2 * Math.PI);
-    context.fill();
-  }
+  updatemap(state);
 });
