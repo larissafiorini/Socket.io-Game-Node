@@ -13,4 +13,4 @@ function createTable(a, l) {
   document.getElementById("mapTable").appendChild(table);
 }
 
-createTable(7, 5);
+createTable(7, 10);
