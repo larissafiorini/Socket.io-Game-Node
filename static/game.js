@@ -1,4 +1,26 @@
+var dice = {
+  sides: 6,
+  roll: function () {
+    var randomNumber = Math.floor(Math.random() * this.sides) + 1;
+    return randomNumber;
+  }
+}
+
+function printNumber(number) {
+  var dice_elem = document.getElementById('dice_elem');
+  dice_elem.innerHTML = number;
+}
+
+var button = document.getElementById('button');
+
+function diceroll() {
+  var result = dice.roll();
+  return result;
+};
+
 function movePlayer(diceNumber) {
+  var diceNumber=diceroll();
+  printNumber(diceNumber);
   socket.emit("movement", diceNumber);
 }
 

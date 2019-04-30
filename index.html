@@ -2,10 +2,40 @@
   <head>
     <title>A Multiplayer Game</title>
     <style>
+      * {
+        font-family: Helvetica, Arial, sans-serif;
+        
+      }
       td {
         width: 137px;
         height: 127px;
         background-color:#fff;
+      }
+      .buttons{
+      background-color: rgb(82, 186, 179);
+      border-radius: 5px;
+      border: none;
+      color: rgb(255, 255, 255);
+      padding: 10px;
+      text-transform: uppercase;
+      width: 200px;
+      cursor: pointer;
+
+      }
+      #dice_elem {
+        height: 100px;
+        width: 100px;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid gray;
+        border-radius: 10px;  
+        font-size:80px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      #playdice{
+        margin-right: 0px;
+        margin-top:0px;
       }
     </style>
     <script src="/socket.io/socket.io.js"></script>
@@ -18,6 +48,7 @@
         document.getElementById("nickname").style.display = "none";
         document.getElementById("mapTable").style.display = "block";
       }
+
     </script>
   </head>
 
@@ -25,7 +56,7 @@
     <div id="nickname">
       <form action="">
         <input type="text" id="name" name="name" />
-        <input
+        <input class="buttons"
           type="button"
           onclick="javascript:sendNickname(this.form.name.value)"
           value="Confirmar"
@@ -34,7 +65,13 @@
     </div>
 
     <div id="mapTable" hidden>
-      <button onclick="movePlayer(1)">Jogar</button>
+      <button class="buttons" onclick="movePlayer(1)">Jogar dado</button>
+
+      <div id="playdice">
+          <p id="dice_elem">
+      
+          </p>
+      </div>
     </div>
   </body>
   <script src="/static/map.js"></script>
