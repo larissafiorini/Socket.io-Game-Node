@@ -22,20 +22,6 @@ server.listen(5000, function() {
 var state = {
   map: [
     { x: 0, y: 0, player: [] },
-<<<<<<< HEAD
-    { x: 0, y: 1, effect: [0, 2], player: [] },
-    { x: 0, y: 2, effect: [1, 2], player: [] },
-    { x: 0, y: 3, effect: [1, 2], player: [] },
-    { x: 0, y: 4, effect: [1, 2], player: [] },
-    { x: 1, y: 4, effect: [1, 2], player: [] },
-    { x: 2, y: 4, effect: [1, 2], player: [] },
-    { x: 3, y: 4, effect: [1, 2], player: [] },
-    { x: 3, y: 3, effect: [1, 2], player: [] },
-    { x: 3, y: 2, effect: [1, 2], player: [] },
-    { x: 3, y: 3, effect: [1, 2], player: [] },
-    { x: 4, y: 2, effect: [1, 2], player: [] },
-    { x: 4, y: 3, effect: [1, 2], player: [] }
-=======
     {x: 0, y: 1, effect : [0,1] , player: []},
     {x: 0, y: 2, effect : [1,3] , player: []},
     {x: 0, y: 3, effect : [1,1], player: [] },
@@ -69,7 +55,6 @@ var state = {
     // { x: 3, y: 2, effect: [1, 2], player: [] },
     // { x: 3, y: 1, effect: [1, 2], player: [] },
     // { x: 3, y: 0, effect: [1, 2], player: [] }
->>>>>>> b7faff2453e4d8f4a8dc91441aff285cfe4be066
   ],
   players: {}
 };
