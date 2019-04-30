@@ -27,15 +27,13 @@ var state = {
     { x: 0, y: 3, effect: [1, 2], player: [] },
     { x: 0, y: 4, effect: [1, 2], player: [] },
     { x: 1, y: 4, effect: [1, 2], player: [] },
-    { x: 1, y: 3, effect: [1, 2], player: [] },
-    { x: 2, y: 2, effect: [1, 2], player: [] },
-    { x: 2, y: 3, effect: [1, 2], player: [] },
     { x: 2, y: 4, effect: [1, 2], player: [] },
     { x: 3, y: 4, effect: [1, 2], player: [] },
     { x: 3, y: 3, effect: [1, 2], player: [] },
     { x: 3, y: 2, effect: [1, 2], player: [] },
     { x: 3, y: 3, effect: [1, 2], player: [] },
-    { x: 3, y: 0, effect: [1, 2], player: [] }
+    { x: 4, y: 2, effect: [1, 2], player: [] },
+    { x: 4, y: 3, effect: [1, 2], player: [] }
   ],
   players: {}
 };
@@ -70,7 +68,10 @@ io.on("connection", function(socket) {
 
 function updateMap(newposition, lastPosition, player) {
   for (var i = 0; i < state.map[lastPosition].player.length; i++) {
-    if (state.map[lastPosition].player[i].id == player.id) {
+    if (
+      state.map[lastPosition].player[i] != null &&
+      state.map[lastPosition].player[i].id == player.id
+    ) {
       state.map[lastPosition].player[i] = null;
     }
   }
