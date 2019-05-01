@@ -19,7 +19,7 @@ function diceroll() {
 };
 
 function movePlayer(diceNumber) {
-  var diceNumber=diceroll();
+  var diceNumber = diceroll();
   printNumber(diceNumber);
   socket.emit("movement", diceNumber);
 }
@@ -33,20 +33,24 @@ function updatemap(state) {
     p = x[map[i].x].cells[map[i].y];
     p.style.backgroundImage = 'url("static/asset/floor.png")';
     for (var j = 0; j < map[i].player.length; j++) {
-      if (map[i].player[j] != null ) {
-        if (map[i].player[j].id == 1){
-          p.style.backgroundImage = 'url("static/asset/p1.png")';
-        }else{
-          p.style.backgroundImage = 'url("static/asset/p1.png")';
+      if (map[i].player[j] != null) {
+        if (map[i].player.length <= 1) {
+          if (map[i].player[j].id == 1) {
+            p.style.backgroundImage = 'url("static/asset/p1.png")';
+          } else {
+            p.style.backgroundImage = 'url("static/asset/p2.png")';
+          }
+        } else {
+          p.style.backgroundImage = 'url("static/asset/p2p1.png")';
         }
-        
+
       }
     }
   }
 }
 
-socket.on("state",  function(state) {
+socket.on("state", function (state) {
   console.log(state);
 
-   updatemap(state);
+  updatemap(state);
 });
