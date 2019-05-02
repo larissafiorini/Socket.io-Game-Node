@@ -6,6 +6,9 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 var id = 1;
+var jogadorAtual = 0;
+var jogoAcabou = false;
+var ganhador;
 
 app.set("port", 5000);
 app.use("/static", express.static(__dirname + "/static"));
@@ -60,21 +63,7 @@ var state = {
     { x: 6, y: 7, effect: [null, null], player: [] },
     { x: 6, y: 8, effect: [null, null], player: [] },
     { x: 6, y: 9, effect: [0, 2], player: [] },
-    { x: 5, y: 9, player: [] },
-    // { x: 0, y: 1, effect: [0, 2], player: [] },
-    // { x: 0, y: 2, effect: [1, 2], player: [] },
-    // { x: 0, y: 3, effect: [1, 2], player: [] },
-    // { x: 0, y: 4, effect: [1, 2], player: [] },
-    // { x: 1, y: 4, effect: [1, 2], player: [] },
-    // { x: 1, y: 3, effect: [1, 2], player: [] },
-    // { x: 2, y: 2, effect: [1, 2], player: [] },
-    // { x: 2, y: 3, effect: [1, 2], player: [] },
-    // { x: 2, y: 4, effect: [1, 2], player: [] },
-    // { x: 3, y: 4, effect: [1, 2], player: [] },
-    // { x: 3, y: 3, effect: [1, 2], player: [] },
-    // { x: 3, y: 2, effect: [1, 2], player: [] },
-    // { x: 3, y: 1, effect: [1, 2], player: [] },
-    // { x: 3, y: 0, effect: [1, 2], player: [] }
+    { x: 5, y: 9, player: [] }
   ],
   players: {}
 };
@@ -89,6 +78,9 @@ io.on("connection", function (socket) {
       id: id
       //colocar imagem do player
     };
+    if (jogadorAtual == 0) {
+      jogadorAtual = id;
+    }
     state.players[socket.id] = newPlayer;
     state.map[0].player.push(newPlayer);
     id++;
@@ -97,42 +89,73 @@ io.on("connection", function (socket) {
 
   socket.on("movement", function (diceNumber) {
     var player = state.players[socket.id] || {};
-    var lastPosition = player.position;
-    player.position += diceNumber;
-    player.x = state.map[player.position].x;
-    player.y = state.map[player.position].y;
-    
-    try{
-      updateMap(player.position, lastPosition, player);
-      io.sockets.emit("state", state);
-    }catch(e){
-      print(e);
-    } finally{
-      setTimeout(function(){
-        if (player.x != 3 && player.y != 0) {
-          if (state.map[player.position].effect[0] != null) {
-            lastPosition = player.position;
-            if (state.map[player.position].effect[0] == 0) {
-              player.position -= state.map[player.position].effect[1];
-            } else {
-              player.position += state.map[player.position].effect[1];
-            }
-            player.x = state.map[player.position].x;
-            player.y = state.map[player.position].y;
-            
-            updateMap(player.position, lastPosition, player);
-            io.sockets.emit("state", state);
-          }
-        }
-       }, 3000);
-     
-    }
+    if (player.id == jogadorAtual) {
+      if(jogadorAtual == 1){
+        jogadorAtual = 2;
+      }else{
+        jogadorAtual = 1;
+      }
+      
+      var lastPosition = player.position;
+      var position = player.position + diceNumber;
+      if (position >= state.map.length - 1) {
+        player.position = state.map.length - 1;
+        player.x = state.map[player.position].x;
+        player.y = state.map[player.position].y;
+        updateMap(player.position, lastPosition, player);
+        io.sockets.emit("state", state);
+      } else {
+        player.position = position;
+        console.log(state.map.length + " " + position);
+        player.x = state.map[player.position].x;
+        player.y = state.map[player.position].y;
 
+        try {
+          updateMap(player.position, lastPosition, player);
+          io.sockets.emit("state", state);
+        } catch (e) {
+          print(e);
+        } finally {
+          setTimeout(function () {
+            if (player.x != 3 && player.y != 0) {
+              if (state.map[player.position].effect[0] != null) {
+                lastPosition = player.position;
+                if (state.map[player.position].effect[0] == 0) {
+                  player.position -= state.map[player.position].effect[1];
+                } else {
+                  player.position += state.map[player.position].effect[1];
+                }
+                player.x = state.map[player.position].x;
+                player.y = state.map[player.position].y;
+
+                updateMap(player.position, lastPosition, player);
+                io.sockets.emit("state", state);
+              }
+            }
+          }, 3000);
+        }
+
+
+      }
+
+      if(player.position == state.map.length-1){
+        jogoAcabou = true;
+        ganhador = player.id;
+      }
+    }
   });
 });
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function getJogadorAtual() {
+  return jogadorAtual;
+}
+
+function getGanhador(){
+  return ganhador;
+}
+
+function getStatusGame() {
+  return jogoAcabou;
 }
 
 function updateMap(newposition, lastPosition, player) {
