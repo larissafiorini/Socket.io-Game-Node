@@ -1,11 +1,9 @@
 <html>
-
-<head>
-  <title>A Multiplayer Game</title>
-  <style>
-    * {
+  <head>
+    <title>A Multiplayer Game</title>
+    <style>
+      * {
         font-family: Helvetica, Arial, sans-serif;
-        
       }
       body {
         background-image: url("static/asset/background.jpg");
@@ -14,7 +12,7 @@
         width: 130px;
         height: 127px;
       }
-      .buttons{
+      .buttons {
         width: 20%;
         background-color: rgb(82, 186, 179);
         color: white;
@@ -25,10 +23,11 @@
         cursor: pointer;
         text-transform: uppercase;
       }
-      .buttons:hover{
+      .buttons:hover {
         background-color: rgb(1, 186, 179);
       }
-      input[type=text], select {
+      input[type="text"],
+      select {
         width: 20%;
         padding: 12px 20px;
         margin: 8px 0;
@@ -43,51 +42,54 @@
         padding: 10px;
         text-align: center;
         border: 1px solid gray;
-        border-radius: 10px;  
-        font-size:80px;
+        border-radius: 10px;
+        font-size: 80px;
         margin-top: 5px;
         margin-bottom: 5px;
       }
-      #playdice{
+      #playdice {
         margin-right: 0px;
-        margin-top:0px;
+        margin-top: 0px;
       }
       p {
         color: white;
       }
     </style>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/static/constant.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/constant.js"></script>
 
-  <script src="/static/game.js"></script>
-  <script>
-    function sendNickname(data) {
-      socket.emit("new player", data);
-      document.getElementById("nickname").style.display = "none";
-      document.getElementById("mapTable").style.display = "block";
-    }
+    <script src="/static/game.js"></script>
+    <script>
+      function sendNickname(data) {
+        socket.emit("new player", data);
+        document.getElementById("nickname").style.display = "none";
+        document.getElementById("mapTable").style.display = "block";
+      }
+    </script>
+  </head>
 
-  </script>
-</head>
-
-<body>
-  <div id="nickname">
-    <form action="">
-      <input type="text" id="name" name="name" />
-      <input class="buttons" type="button" onclick="javascript:sendNickname(this.form.name.value)" value="Confirmar" />
-    </form>
-  </div>
-
-  <div id="mapTable" hidden>
-    <button class="buttons" onclick="movePlayer(1)">Jogar dado</button>
-
-    <div id="playdice">
-      <p id="dice_elem">
-
-      </p>
+  <body>
+    <div id="nickname">
+      <form action="">
+        <input type="text" id="name" name="name" />
+        <input
+          class="buttons"
+          type="button"
+          onclick="javascript:sendNickname(this.form.name.value)"
+          value="Confirmar"
+        />
+      </form>
     </div>
-  </div>
-</body>
-<script src="/static/map.js"></script>
 
+    <div id="mapTable" hidden>
+      <button id="playButton" class="buttons" onclick="movePlayer(1)">
+        Jogar dado
+      </button>
+
+      <div id="playdice">
+        <p id="dice_elem"></p>
+      </div>
+    </div>
+  </body>
+  <script src="/static/map.js"></script>
 </html>
