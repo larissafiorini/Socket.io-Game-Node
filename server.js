@@ -78,7 +78,8 @@ io.on("connection", function(socket) {
         x: 0,
         y: 0,
         name: data,
-        id: socket.id
+        id: socket.id,
+        imageId: id
       };
       if (!state.turn) {
         state.turn = newPlayer.id;
