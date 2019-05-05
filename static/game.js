@@ -27,10 +27,11 @@ function movePlayer(diceNumber) {
 function updatemap(state) {
   var x = document.getElementById("map").rows;
   var playButton = document.getElementById("playButton");
-
+  setLogMessage(state.log);
   var map = state.map;
   var p;
 
+  //Controle do botao de jogar o dado
   if (state.turn == socket.id) {
     playButton.disabled = false;
     playButton.style.backgroundColor = "rgb(1, 186, 179)";
@@ -38,7 +39,7 @@ function updatemap(state) {
   } else {
     playButton.disabled = true;
     playButton.style.backgroundColor = "#597aaf";
-    playButton.innerHTML = "Aguarde Seu Turno";
+    playButton.innerHTML = "Aguarde Seu Turno...";
   }
 
   for (var i = 0; i < map.length; i++) {
@@ -60,8 +61,10 @@ function updatemap(state) {
   }
 }
 
+function setLogMessage(message) {
+  document.getElementById("log").innerHTML = message;
+}
+
 socket.on("state", function(state) {
-  console.log(state);
-  console.log(socket);
   updatemap(state);
 });

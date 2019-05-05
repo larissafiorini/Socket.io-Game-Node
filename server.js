@@ -66,7 +66,8 @@ var state = {
     { x: 5, y: 9, player: [] }
   ],
   players: [],
-  turn: 0
+  turn: 0,
+  log: null
 };
 
 io.on("connection", function(socket) {
@@ -116,7 +117,6 @@ io.on("connection", function(socket) {
         io.sockets.emit("state", state);
       } else {
         player.position = position;
-        //console.log(state.map.length + " " + position);
         player.x = state.map[player.position].x;
         player.y = state.map[player.position].y;
 
@@ -127,19 +127,33 @@ io.on("connection", function(socket) {
           print(e);
         } finally {
           setTimeout(function() {
+            var effectStrin = "";
             if (player.x != 3 && player.y != 0) {
               if (state.map[player.position].effect[0] != null) {
                 lastPosition = player.position;
                 if (state.map[player.position].effect[0] == 0) {
+                  effectStrin =
+                    "[EFEITO] Player " +
+                    player.name +
+                    " volte " +
+                    state.map[player.position].effect[1] +
+                    " casas.";
                   player.position -= state.map[player.position].effect[1];
                 } else {
+                  effectStrin =
+                    "[EFEITO] Player " +
+                    player.name +
+                    " ande mais " +
+                    state.map[player.position].effect[1] +
+                    " casas.";
                   player.position += state.map[player.position].effect[1];
                 }
                 player.x = state.map[player.position].x;
                 player.y = state.map[player.position].y;
-
+                state.log = effectStrin;
                 updateMap(player.position, lastPosition, player);
                 io.sockets.emit("state", state);
+                state.log = "";
               }
             }
           }, 3000);
@@ -148,7 +162,10 @@ io.on("connection", function(socket) {
 
       if (player.position == state.map.length - 1) {
         jogoAcabou = true;
+        effectStrin = "[JOGO] Player " + player.name + " GANHOU! ";
+        state.log = effectStrin;
         ganhador = player.id;
+        io.sockets.emit("state", state);
       }
     }
   });
