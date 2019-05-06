@@ -1,3 +1,4 @@
+//cria a matiz representativa do tabuleiro
 function createTable(a, l) {
   var table = document.createElement("table");
   table.setAttribute("id", "map");

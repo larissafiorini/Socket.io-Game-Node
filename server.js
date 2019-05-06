@@ -6,7 +6,6 @@ var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 var id = 0;
-//var jogadorAtual = 0;
 var jogoAcabou = false;
 var ganhador;
 
@@ -14,15 +13,17 @@ app.set("port", 5000);
 app.use("/static", express.static(__dirname + "/static"));
 
 // Routing
-app.get("/", function(request, response) {
+app.get("/", function (request, response) {
   response.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Starts the server.
-server.listen(5000, function() {
+server.listen(5000, function () {
   console.log("Starting server on port 5000");
 });
 
+//Mapa do jogo com seu x e y correspondentes, efeitos e um array de players para
+//saber se existe um jogador na determinada posição
 var state = {
   map: [
     { x: 0, y: 0, player: [] },
@@ -70,8 +71,9 @@ var state = {
   log: null
 };
 
-io.on("connection", function(socket) {
-  socket.on("new player", function(data) {
+//criação de conexão e inserção de um novo player no jogo
+io.on("connection", function (socket) {
+  socket.on("new player", function (data) {
     if (state.players.length <= 1) {
       var newPlayer = {
         position: 0,
@@ -93,7 +95,10 @@ io.on("connection", function(socket) {
     }
   });
 
-  socket.on("movement", function(diceNumber) {
+  //Função para movimento do player de acordo com o valor do dado
+  //é verificado também se a nova posição tem algum efeito, se tiver
+  //atualiza novamente a posição do player
+  socket.on("movement", function (diceNumber) {
     var player = {};
     state.players.map(p => {
       if (p.id == socket.id) {
@@ -122,42 +127,57 @@ io.on("connection", function(socket) {
         player.y = state.map[player.position].y;
 
         try {
-          updateMap(player.position, lastPosition, player);
-          io.sockets.emit("state", state);
-        } catch (e) {
-          print(e);
-        } finally {
-          setTimeout(function() {
-            var effectStrin = "";
-            if (player.x != 3 && player.y != 0) {
-              if (state.map[player.position].effect[0] != null) {
-                lastPosition = player.position;
-                if (state.map[player.position].effect[0] == 0) {
-                  effectStrin =
-                    "[EFEITO] Player " +
-                    player.name +
-                    " volte " +
-                    state.map[player.position].effect[1] +
-                    " casas.";
-                  player.position -= state.map[player.position].effect[1];
-                } else {
-                  effectStrin =
-                    "[EFEITO] Player " +
-                    player.name +
-                    " ande mais " +
-                    state.map[player.position].effect[1] +
-                    " casas.";
-                  player.position += state.map[player.position].effect[1];
-                }
-                player.x = state.map[player.position].x;
-                player.y = state.map[player.position].y;
+          var effectStrin = "";
+          var temEfeito = false;
+          if (player.x != 3 && player.y != 0) {
+            if (state.map[player.position].effect[0] != null) {
+              temEfeito = true;
+              if (state.map[player.position].effect[0] == 0) {
+                effectStrin =
+                  "CAUTELINHA! Player " +
+                  player.name +
+                  " volte " +
+                  state.map[player.position].effect[1] +
+                  " casas.";
                 state.log = effectStrin;
                 updateMap(player.position, lastPosition, player);
                 io.sockets.emit("state", state);
-                state.log = "";
+                lastPosition = player.position;
+                player.position -= state.map[player.position].effect[1];
+              } else {
+                effectStrin =
+                  "VEM TRANQUILO! Player " +
+                  player.name +
+                  " ande mais " +
+                  state.map[player.position].effect[1] +
+                  " casas.";
+                state.log = effectStrin;
+                updateMap(player.position, lastPosition, player);
+                io.sockets.emit("state", state);
+                lastPosition = player.position;
+                player.position += state.map[player.position].effect[1];
               }
+              player.x = state.map[player.position].x;
+              player.y = state.map[player.position].y;
+            }else{
+              updateMap(player.position, lastPosition, player);
+              io.sockets.emit("state", state);
             }
-          }, 3000);
+          }
+          else {
+            updateMap(player.position, lastPosition, player);
+            io.sockets.emit("state", state);
+          }
+        } catch (e) {
+          print(e);
+        } finally {
+          if (temEfeito) {
+            setTimeout(function () {
+              updateMap(player.position, lastPosition, player);
+              io.sockets.emit("state", state);
+              state.log = "";
+            }, 2000);
+          }
         }
       }
 
@@ -172,18 +192,7 @@ io.on("connection", function(socket) {
   });
 });
 
-// function getJogadorAtual() {
-//   return jogadorAtual;
-// }
-
-function getGanhador() {
-  return ganhador;
-}
-
-function getStatusGame() {
-  return jogoAcabou;
-}
-
+//função para atualizar o mapa com a nova posição do jogador
 function updateMap(newposition, lastPosition, player) {
   for (var i = 0; i < state.map[lastPosition].player.length; i++) {
     if (

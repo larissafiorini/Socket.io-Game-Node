@@ -1,3 +1,4 @@
+//dado
 var dice = {
   sides: 6,
   roll: function() {
@@ -18,12 +19,14 @@ function diceroll() {
   return result;
 }
 
+//Função responsável por depois do dado sere acionado emitir um novo movimento do jogador
 function movePlayer(diceNumber) {
   var diceNumber = diceroll();
   printNumber(diceNumber);
   socket.emit("movement", diceNumber);
 }
 
+//Função responsável por atualizar a interface do tabuleiro
 function updatemap(state) {
   var x = document.getElementById("map").rows;
   var playButton = document.getElementById("playButton");
@@ -48,7 +51,7 @@ function updatemap(state) {
     for (var j = 0; j < map[i].player.length; j++) {
       if (map[i].player[j] != null) {
         if (map[i].player.length <= 1) {
-          if (map[i].player[j].id == 0) {
+          if (map[i].player[j].imageId == 0) {
             p.style.backgroundImage = 'url("static/asset/p1.png")';
           } else {
             p.style.backgroundImage = 'url("static/asset/p2.png")';
@@ -61,6 +64,7 @@ function updatemap(state) {
   }
 }
 
+//Mensagens dos efeitos de cada rodada
 function setLogMessage(message) {
   document.getElementById("log").innerHTML = message;
 }
